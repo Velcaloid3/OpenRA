@@ -53,14 +53,26 @@ namespace OpenRA.Mods.Common.Widgets.Logic.Ingame
 			var newSelection = SelectionUtils.SelectActorsOnScreen(world, worldRenderer, null, eligiblePlayers).SubsetWithHighestSelectionPriority(e.Modifiers).ToList();
 
 			// Check if selecting actors on the screen has selected new units
-			if (newSelection.Count > selection.Actors.Count)
-				TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossScreen, "units", newSelection.Count);
-			else
-			{
-				// Select actors in the world that have highest selection priority
-				newSelection = SelectionUtils.SelectActorsInWorld(world, null, eligiblePlayers).SubsetWithHighestSelectionPriority(e.Modifiers).ToList();
-				TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossMap, "units", newSelection.Count);
-			}
+			string summary = string.Join(" ", newSelection
+	.GroupBy(a => a.Info.Name)
+	.Select(g => $"{g.Key}: {g.Count()}"));
+
+if (newSelection.Count > selection.Actors.Count)
+	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossScreen, "units", summary);
+else
+{
+	// Select actors in the world that have highest selection priority
+	newSelection = SelectionUtils.SelectActorsInWorld(world, null, eligiblePlayers)
+		.SubsetWithHighestSelectionPriority(e.Modifiers)
+		.ToList();
+
+	summary = string.Join(" ", newSelection
+		.GroupBy(a => a.Info.Name)
+		.Select(g => $"{g.Key}: {g.Count()}"));
+
+	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossMap, "units", summary);
+}
+
 
 			selection.Combine(world, newSelection, false, false);
 
