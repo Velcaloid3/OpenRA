@@ -636,15 +636,15 @@ nothing-selected = Nothing selected.
 
 ## SelectUnitsByTypeHotkeyLogic, SelectAllUnitsHotkeyLogic
 selected-units-across-screen =
-    { $units ->
+    { $cost ->
         [one] Selected one unit across screen.
-       *[other] Selected { $units } units across screen.
+       *[other] Selected { $cost } units across screen.
     }
 
 selected-units-across-map =
-    { $units ->
+    { $cost ->
         [one] Selected one unit across map.
-       *[other] Selected { $units } units across map.
+       *[other] Selected { $cost } units across map.
     }
 
 ## ServerCreationLogic
