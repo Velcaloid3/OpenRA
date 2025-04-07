@@ -53,26 +53,26 @@ namespace OpenRA.Mods.Common.Widgets.Logic.Ingame
 			var newSelection = SelectionUtils.SelectActorsOnScreen(world, worldRenderer, null, eligiblePlayers).SubsetWithHighestSelectionPriority(e.Modifiers).ToList();
 
 			// Check if selecting actors on the screen has selected new units
-			string summary = string.Join(" ", newSelection
-	.GroupBy(a => a.Info.Name)
-	.Select(g => $"{g.Key}: {g.Count()}"));
+			int totalCost = newSelection
+    .Where(a => a.Info.Traits.Contains<ValuedInfo>())
+    .Sum(a => a.Info.Traits.Get<ValuedInfo>().Cost);
 
 if (newSelection.Count > selection.Actors.Count)
-	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossScreen, "units", summary);
+{
+	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossScreen, "units", totalCost);
+}
 else
 {
-	// Select actors in the world that have highest selection priority
 	newSelection = SelectionUtils.SelectActorsInWorld(world, null, eligiblePlayers)
 		.SubsetWithHighestSelectionPriority(e.Modifiers)
 		.ToList();
 
-	summary = string.Join(" ", newSelection
-		.GroupBy(a => a.Info.Name)
-		.Select(g => $"{g.Key}: {g.Count()}"));
+	totalCost = newSelection
+		.Where(a => a.Info.Traits.Contains<ValuedInfo>())
+		.Sum(a => a.Info.Traits.Get<ValuedInfo>().Cost);
 
-	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossMap, "units", summary);
+	TextNotificationsManager.AddFeedbackLine(SelectedUnitsAcrossMap, "units", totalCost);
 }
-
 
 			selection.Combine(world, newSelection, false, false);
 
